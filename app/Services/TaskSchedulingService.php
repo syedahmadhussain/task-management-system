@@ -48,7 +48,7 @@ final class TaskSchedulingService
             ->where('assigned_to', $userId)
             ->whereIn('status', ['pending', 'in_progress'])
             ->where('estimated_time', '>', 0)
-            ->where('estimated_time', '<=', 24) // Reasonable daily limit
+            ->where('estimated_time', '<=', 24)
             ->whereNotNull('due_date')
             ->get();
     }
@@ -61,7 +61,7 @@ final class TaskSchedulingService
             })
             ->whereIn('status', ['pending', 'in_progress'])
             ->where('estimated_time', '>', 0)
-            ->where('estimated_time', '<=', 24) // Reasonable daily limit
+            ->where('estimated_time', '<=', 24)
             ->whereNotNull('due_date')
             ->get();
     }
@@ -74,7 +74,7 @@ final class TaskSchedulingService
             })
             ->whereIn('status', ['pending', 'in_progress'])
             ->where('estimated_time', '>', 0)
-            ->where('estimated_time', '<=', 24) // Reasonable daily limit
+            ->where('estimated_time', '<=', 24)
             ->whereNotNull('due_date')
             ->get();
     }
@@ -93,7 +93,7 @@ final class TaskSchedulingService
     {
         // Convert string priority to numeric value for calculation
         $priorityNumeric = $this->convertPriorityToNumeric($task->priority);
-        
+
         // Priority weight (1-4, where 1 is highest priority)
         $priorityScore = (5 - $priorityNumeric) * 2; // 8, 6, 4, 2
 
@@ -113,7 +113,7 @@ final class TaskSchedulingService
     {
         return match($priority) {
             'urgent' => 1,
-            'high' => 2, 
+            'high' => 2,
             'medium' => 3,
             'low' => 4,
             default => 3 // default to medium if unknown
@@ -132,7 +132,7 @@ final class TaskSchedulingService
 
         $maxDays = 365; // Prevent infinite loops
         $dayCount = 0;
-        
+
         while (!empty($remainingTasks) && $dayCount < $maxDays) {
             $dailyTasks = [];
             $dailyHours = 0;

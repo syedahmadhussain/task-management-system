@@ -1,0 +1,893 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Task Management System API",
+		"description": "Complete API collection for Task Management System with JWT authentication, real-time features, and multi-role support.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('auth_token', response.access_token);",
+									"    pm.environment.set('user_id', response.user.id);",
+									"    pm.environment.set('user_role', response.user.role);",
+									"    pm.environment.set('org_id', response.user.org_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@taskmanagement.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Login with email and password. Sets auth token automatically."
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New User\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"member\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Register new user (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me"]
+						},
+						"description": "Get current user profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Logout and invalidate token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login, registration, and profile management"
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Get All Tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tasks?page=1&per_page=20&sort_by=created_at&sort_direction=desc",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "20"
+								},
+								{
+									"key": "status",
+									"value": "pending",
+									"disabled": true
+								},
+								{
+									"key": "priority",
+									"value": "high",
+									"disabled": true
+								},
+								{
+									"key": "sort_by",
+									"value": "created_at"
+								},
+								{
+									"key": "sort_direction",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get all tasks with filtering and pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('task_id', response.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Task from Postman\",\n    \"description\": \"This is a test task created from Postman\",\n    \"status\": \"pending\",\n    \"priority\": \"high\",\n    \"project_id\": 1,\n    \"assigned_to\": 2,\n    \"estimated_time\": 4.5,\n    \"due_date\": \"2025-08-30\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"]
+						},
+						"description": "Create a new task (Admin/Manager only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Task by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}"]
+						},
+						"description": "Get specific task details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Task Name\",\n    \"description\": \"Updated task description\",\n    \"status\": \"in_progress\",\n    \"priority\": \"urgent\",\n    \"estimated_time\": 6.0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}"]
+						},
+						"description": "Update task details"
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}/complete",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}", "complete"]
+						},
+						"description": "Mark task as completed"
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}/assign",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}", "assign"]
+						},
+						"description": "Assign task to a user (Admin/Manager only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}"]
+						},
+						"description": "Delete task (Admin/Manager only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/my-tasks?status=pending",
+							"host": ["{{base_url}}"],
+							"path": ["my-tasks"],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						},
+						"description": "Get current user's assigned tasks"
+					},
+					"response": []
+				}
+			],
+			"description": "Task management endpoints for CRUD operations"
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "Get All Projects",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/projects?page=1&per_page=50",
+							"host": ["{{base_url}}"],
+							"path": ["projects"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Get all projects with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('project_id', response.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Project from Postman\",\n    \"description\": \"This is a test project created from Postman\",\n    \"status\": \"active\",\n    \"start_date\": \"2025-08-25\",\n    \"end_date\": \"2025-12-31\",\n    \"manager_id\": 2,\n    \"budget\": 50000.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/projects",
+							"host": ["{{base_url}}"],
+							"path": ["projects"]
+						},
+						"description": "Create a new project (Admin/Manager only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/projects/{{project_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["projects", "{{project_id}}"]
+						},
+						"description": "Get specific project details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Project Name\",\n    \"description\": \"Updated project description\",\n    \"status\": \"in_progress\",\n    \"budget\": 75000.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/projects/{{project_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["projects", "{{project_id}}"]
+						},
+						"description": "Update project details"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/projects/{{project_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["projects", "{{project_id}}"]
+						},
+						"description": "Delete project (Admin/Manager only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project Tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/projects/{{project_id}}/tasks",
+							"host": ["{{base_url}}"],
+							"path": ["projects", "{{project_id}}", "tasks"]
+						},
+						"description": "Get all tasks for a specific project"
+					},
+					"response": []
+				}
+			],
+			"description": "Project management endpoints for CRUD operations"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": ["{{base_url}}"],
+							"path": ["users"]
+						},
+						"description": "Get all users in organization"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Managers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users?role=manager",
+							"host": ["{{base_url}}"],
+							"path": ["users"],
+							"query": [
+								{
+									"key": "role",
+									"value": "manager"
+								}
+							]
+						},
+						"description": "Get all managers"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New User\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"member\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": ["{{base_url}}"],
+							"path": ["users"]
+						},
+						"description": "Create new user (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Scheduling",
+			"item": [
+				{
+					"name": "Get My Schedule",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/my-schedule?start_date=2025-08-25&hours_per_day=8",
+							"host": ["{{base_url}}"],
+							"path": ["my-schedule"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2025-08-25"
+								},
+								{
+									"key": "hours_per_day",
+									"value": "8"
+								}
+							]
+						},
+						"description": "Get personal task schedule with AI optimization"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Team Schedule",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tasks/schedule?start_date=2025-08-25&hours_per_day=8",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "schedule"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2025-08-25"
+								},
+								{
+									"key": "hours_per_day",
+									"value": "8"
+								}
+							]
+						},
+						"description": "Get team/organization schedule (Admin/Manager only)"
+					},
+					"response": []
+				}
+			],
+			"description": "AI-powered task scheduling endpoints"
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Dashboard Overview",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/dashboard",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "dashboard"]
+						},
+						"description": "Get dashboard overview statistics"
+					},
+					"response": []
+				},
+				{
+					"name": "Task Statistics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/task-stats",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "task-stats"]
+						},
+						"description": "Get task completion statistics"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Dashboard",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/admin-dashboard",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "admin-dashboard"]
+						},
+						"description": "Get admin dashboard with organization-wide statistics (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "User Performance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/user-performance",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "user-performance"]
+						},
+						"description": "Get user performance analytics (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Analytics and reporting endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set base URL if not already set",
+					"if (!pm.environment.get('base_url')) {",
+					"    pm.environment.set('base_url', 'http://localhost:8000/api');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		}
+	]
+}

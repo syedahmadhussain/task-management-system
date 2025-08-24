@@ -4,14 +4,14 @@ A comprehensive task management system built with Laravel backend and React fron
 
 ## Features
 
-- 🔐 **Authentication & Authorization**: JWT-based auth with role-based access control
-- 👥 **Multi-role Support**: Admin, Manager, and Member roles with different permissions
-- 📋 **Task Management**: Create, assign, and track tasks with priorities and due dates
-- 📊 **Project Management**: Organize tasks within projects with team collaboration
-- 📈 **Dashboard & Analytics**: Real-time overview with statistics and charts
-- 🔄 **Real-time Updates**: Live notifications via WebSocket (Laravel Reverb)
-- 📅 **AI-powered Scheduling**: Intelligent task scheduling based on priority and deadlines
-- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Authentication & Authorization**: JWT-based auth with role-based access control
+- **Multi-role Support**: Admin, Manager, and Member roles with different permissions
+- **Task Management**: Create, assign, and track tasks with priorities and due dates
+- **Project Management**: Organize tasks within projects with team collaboration
+- **Dashboard & Analytics**: Real-time overview with statistics and charts
+- **Real-time Updates**: Live notifications via WebSocket (Laravel Reverb)
+- **AI-powered Scheduling**: Intelligent task scheduling based on priority and deadlines
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
 ## Tech Stack
 
