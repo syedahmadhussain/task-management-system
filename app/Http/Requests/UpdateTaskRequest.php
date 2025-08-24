@@ -214,17 +214,6 @@ final class UpdateTaskRequest extends FormRequest
             }
         }
 
-        // Optional: Completion notes for completed tasks (removed requirement to unblock status changes)
-        // TODO: Consider making completion notes mandatory through UI or add validation later
-        // if ($this->has('status') && $this->validated('status') === TaskStatus::COMPLETED->value) {
-        //     if (!$this->has('completion_notes') || empty($this->validated('completion_notes'))) {
-        //         $this->failedValidation(
-        //             validator()->make([], [
-        //                 'completion_notes' => 'required_if:status,completed'
-        //             ])
-        //         );
-        //     }
-        // }
     }
 
     private function getTask(): ?\App\Models\Task
