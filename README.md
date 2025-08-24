@@ -22,12 +22,6 @@ A comprehensive task management system built with Laravel backend and React fron
 - JWT Authentication
 - Docker & Docker Compose
 
-**Frontend:**
-- React 18
-- TypeScript
-- Tailwind CSS
-- React Query (TanStack)
-- Laravel Echo
 
 ## Quick Start
 
@@ -47,16 +41,6 @@ A comprehensive task management system built with Laravel backend and React fron
 2. **Start the application**
    ```bash
    make install
-   ```
-   
-   Or manually:
-   ```bash
-   cp .env.example .env
-   docker-compose up -d
-   docker-compose exec app composer install
-   docker-compose exec app php artisan key:generate
-   docker-compose exec app php artisan jwt:secret
-   docker-compose exec app php artisan migrate --seed
    ```
 
 3. **Access the application**
@@ -87,16 +71,16 @@ make prod          # Setup for production
 After seeding, you can log in with these accounts:
 
 **Admin:**
-- Email: `admin@taskmanagement.com`
-- Password: `password`
+- Email: `admin@techcorp.com`
+- Password: `password123`
 
 **Manager:**
-- Email: `manager@taskmanagement.com`
-- Password: `password`
+- Email: `sarah.manager@techcorp.com`
+- Password: `password123`
 
 **Member:**
-- Email: `member@taskmanagement.com`
-- Password: `password`
+- Email: `mike.member@taskmanagement.com`
+- Password: `password123`
 
 ## API Documentation
 
@@ -157,11 +141,6 @@ app/
 
 ## Development
 
-### Running Tests
-```bash
-make test
-```
-
 ### Viewing Logs
 ```bash
 make logs
@@ -186,26 +165,3 @@ make fresh         # Fresh database setup
    - Set `APP_ENV=production` and `APP_DEBUG=false`
    - Configure proper database credentials
    - Set up SSL/TLS for WebSocket connections
-
-3. **Security Considerations**
-   - Change default JWT secret
-   - Update database passwords
-   - Configure firewall rules
-   - Set up proper SSL certificates
-   - Enable rate limiting
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, email support@taskmanagement.com or create an issue in the repository.
